@@ -1,0 +1,9 @@
+fastapi
+   uvicorn[standard]
+   jinja2
+   joblib
+   numpy
+   scikit-learn
+   pytest
+   httpx
+   python-multipart

@@ -57,7 +57,7 @@
 
 
 
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, HTTPException, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -90,13 +90,15 @@ class PredictRequest(BaseModel):
 @app.post("/predict")
 def predict(req: PredictRequest):
     data = np.array(req.data)
-    
     if data.ndim == 1:
         data = data.reshape(1, -1)
 
-    # 🧩 Validation: Ensure each sample has 4 features
+    # Validate feature count
     if data.shape[1] != 4:
-        return {"error": f"Expected 4 features per sample, got {data.shape[1]}"}
+        raise HTTPException(
+            status_code=422,
+            detail=f"Expected 4 features per sample, got {data.shape[1]}"
+        )
 
     preds = model.predict(data).tolist()
     return {"predictions": preds}
